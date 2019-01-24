@@ -5,18 +5,18 @@ import java.util.Random;
 
 public class EventFactory {
 
-    public Event getRandomEvent() {
-        Event event = new Event();
+    public EventModel getRandomEvent() {
+        EventModel eventModel = new EventModel();
 
         Random random = new Random();
         String randomName = "product" + (random.nextInt(4) + 1);
 
-        event.setProductName(randomName);
-        event.setClientIpAddress(new iPv4());
-        event.setProductCategory(new ProductCategory());
-        event.setProductPrice(new Price());
-        event.setPurchaseDate(new PurchaseDate());
+        eventModel.setProductName(randomName);
+        eventModel.setClientIpAddress(new iPv4());
+        eventModel.setProductCategory(new ProductCategory());
+        eventModel.setProductPrice(new Price());
+        eventModel.setPurchaseDate(new PurchaseDate());
 
-        return event;
+        return eventModel;
     }
 }
