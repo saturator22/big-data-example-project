@@ -1,0 +1,65 @@
+#TABLE CREATION & PARTITIONING
+
+CREATE EXTERNAL TABLE IF NOT EXISTS marketsalesdb.productlog
+    (
+    product_name STRING,
+    product_price INT,
+    purchase_date STRING,
+    product_category STRING,
+    ip_address STRING
+    )
+    COMMENT 'External table for product logs'
+    PARTITIONED BY (date STRING)
+    ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ','
+    LOCATION '/user/cloudera/flumetest/events';
+
+ALTER TABLE productlog ADD PARTITION(date='2019-07-01')
+    LOCATION '/user/cloudera/flumetest/events/2019/07/01';
+ALTER TABLE productlog ADD PARTITION(date='2019-07-02')
+    LOCATION '/user/cloudera/flumetest/events/2019/07/02';
+ALTER TABLE productlog ADD PARTITION(date='2019-07-03')
+    LOCATION '/user/cloudera/flumetest/events/2019/07/03';
+ALTER TABLE productlog ADD PARTITION(date='2019-07-04')
+    LOCATION '/user/cloudera/flumetest/events/2019/07/04';
+ALTER TABLE productlog ADD PARTITION(date='2019-07-05')
+    LOCATION '/user/cloudera/flumetest/events/2019/07/05';
+ALTER TABLE productlog ADD PARTITION(date='2019-07-06')
+    LOCATION '/user/cloudera/flumetest/events/2019/07/06';
+ALTER TABLE productlog ADD PARTITION(date='2019-07-07')
+    LOCATION '/user/cloudera/flumetest/events/2019/07/07';
+
+#SELECT 10 TOP FREQUENTLY PURCHASED CATEGORIES
+
+SELECT product_category, count(*) as count FROM productlog
+GROUP BY (product_category)
+ORDER BY (count) DESC
+LIMIT 10;
+
+#SELECT 10 TOP FREQUENTLY PURCHASED PRODUCT IN EACH CATEGORY
+
+SELECT product_category, product_name, num_of_products, row_pos
+    FROM (SELECT product_category, product_name, count(*) as num_of_products,
+    DENSE_RANK() OVER (PARTITION BY product_category order by count(*) desc) as row_pos
+    FROM productlog
+    GROUP BY product_category, product_name) T
+    WHERE row_pos <= 10; 
+
+#CREATING TABLES FOR GEODATA
+CREATE TABLE IF NOT EXISTS countryip
+    (
+    network STRING,
+    geoname_id INT,
+    registered_country_geoname_id INT,
+    represented_country_geoname_id INT,
+    is_anonymous_proxy INT,
+    is_satellite_provider INT
+    )
+    ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ','
+    STORED AS TEXTFILE
+    TBLPROPERTIES("skip.header.line.count"="1");	
+
+
+LOAD DATA INPATH '/user/hive/csv_data/GeoLite2-Country-Blocks-IPv4.csv' OVERWRITE INTO TABLE countryip;
+
