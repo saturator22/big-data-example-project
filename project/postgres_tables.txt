@@ -1,0 +1,16 @@
+CREATE TABLE top10categories
+    (
+    product_category TEXT,
+    count INT);
+
+CREATE TABLE top10productsforcategory
+    (
+    product_category TEXT,
+    product_name TEXT,
+    num_of_products INT,
+    row_pos INT);
+
+CREATE TABLE top10spendings
+    (
+    country_name TEXT,
+    total INT);
