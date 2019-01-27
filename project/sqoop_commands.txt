@@ -1,0 +1,7 @@
+#exporting hive tables to postgres tables commands
+
+sqoop export --connect jdbc:postgresql://localhost/cloudera --username cloudera --password cloudera --table top10categories --export-dir /user/hive/warehouse/marketsalesdb.db/top10categories
+
+sqoop export --connect jdbc:postgresql://localhost/cloudera --username cloudera --password cloudera --table top10productsforcategory --export-dir /user/hive/warehouse/marketsalesdb.db/top10productsforcategory
+
+sqoop export --connect jdbc:postgresql://localhost/cloudera --username cloudera --password cloudera --table top10spendings --export-dir /user/hive/warehouse/marketsalesdb.db/top10spendings
