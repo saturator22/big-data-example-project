@@ -11,10 +11,12 @@ import java.net.Socket;
 public class App {
     public static void main( String[] args ) throws IOException {
 
+        //ip, port of netcat source
         String ip = "192.168.130.131";
         int port = 56565;
 
-        Socket socket = new Socket(ip, port); // Create and connect the socket
+        // Create and connect via socket
+        Socket socket = new Socket(ip, port);
         DataOutputStream dOut = new DataOutputStream(socket.getOutputStream());
         PrintWriter pw = new PrintWriter(dOut);
 
