@@ -14,14 +14,18 @@ object RDDApproach {
     val eventsFiles = sc.textFile("hdfs://localhost/user/cloudera/flumetest/events/2019/07/*/*.*")
 
     //Getting top 10 categories from RDD
-    val top10categories = eventsFiles.map(line => line.split(","))
+    val top10categories =
+      eventsFiles
+      .map(line => line.split(","))
       .map(words => (words(3), 1))
       .reduceByKey(_+_)
       .top(10)(Ordering.by(_._2))
       .foreach(println)
 
     //Getting top 10 products for category from RDD
-    val top10productsForCategory = eventsFiles.map(line => line.split(","))
+    val top10productsForCategory =
+      eventsFiles
+      .map(line => line.split(","))
       .map(words => ((words(3), words(0)), 1))
       .reduceByKey(_+_)
       .groupBy(_._1._1)
@@ -33,7 +37,9 @@ object RDDApproach {
 
 
     //Getting top 10 countries (by spendings) from RDD
-    val top10countrySpendings = geoData.map(_.split(","))
+    val top10countrySpendings =
+      geoData
+      .map(_.split(","))
       .map(words => (words(2), words(3).toInt))
       .reduceByKey(_+_)
       .top(10)(Ordering.by(_._2))
