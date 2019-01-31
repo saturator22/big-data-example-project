@@ -39,7 +39,7 @@ ORDER BY (count) DESC
 LIMIT 10;
 
 #SELECT 10 TOP FREQUENTLY PURCHASED PRODUCT IN EACH CATEGORY
-CREATE TABLE top10productsforcategory
+CREATE TABLE top10products_for_category
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','  as
 SELECT product_category, product_name, num_of_products, row_num
@@ -50,7 +50,7 @@ SELECT product_category, product_name, num_of_products, row_num
     WHERE row_num <= 10; 
 
 #CREATING TABLES FOR GEODATA
-CREATE TABLE IF NOT EXISTS countryip
+CREATE TABLE IF NOT EXISTS country_ip
     (
     network STRING,
     geoname_id INT,
@@ -65,9 +65,9 @@ CREATE TABLE IF NOT EXISTS countryip
     TBLPROPERTIES("skip.header.line.count"="1");	
 
 
-LOAD DATA INPATH '/user/hive/csv_data/GeoLite2-Country-Blocks-IPv4.csv' OVERWRITE INTO TABLE countryip;
+LOAD DATA INPATH '/user/hive/csv_data/GeoLite2-Country-Blocks-IPv4.csv' OVERWRITE INTO TABLE country_ip;
 
-CREATE TABLE IF NOT EXISTS countrylocations
+CREATE TABLE IF NOT EXISTS country_locations
     (
     geoname_id INT,
     locale_code STRING,
@@ -82,24 +82,24 @@ CREATE TABLE IF NOT EXISTS countrylocations
     STORED AS TEXTFILE
     TBLPROPERTIES("skip.header.line.count"="1");
 
-LOAD DATA INPATH '/user/hive/csv_data/GeoLite2-Country-Locations-en.csv' OVERWRITE INTO TABLE countrylocations;
+LOAD DATA INPATH '/user/hive/csv_data/GeoLite2-Country-Locations-en.csv' OVERWRITE INTO TABLE country_locations;
 
 #JOIN countryip, countrylocations and product log as a TABLE
 
-CREATE TABLE countryspendings
+CREATE TABLE country_spendings
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',' AS
-SELECT productlog.ip_address, countryip.geoname_id, countrylocations.country_name, productlog.product_price FROM countryip
+SELECT productlog.ip_address, countryip.geoname_id, countrylocations.country_name, productlog.product_price FROM country_ip
     INNER JOIN productlog
     ON regexp_replace(network, "(/[0-9]{2})", "") = productlog.ip_address
-    INNER JOIN countrylocations
+    INNER JOIN country_locations
     ON countryip.geoname_id = countrylocations.geoname_id;
 
 #GET 10 COUNTRIES WITH MOST SPENDINGS
 CREATE TABLE top10spendings
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','  as 
-SELECT country_name, sum(product_price) as total FROM countryspendings
+SELECT country_name, sum(product_price) as total FROM country_spendings
 GROUP BY country_name
 ORDER BY total DESC
 LIMIT 10;
