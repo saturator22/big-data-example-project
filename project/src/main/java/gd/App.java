@@ -21,16 +21,13 @@ public class App {
         PrintWriter pw = new PrintWriter(dOut);
 
         EventFactory eventFactory = new EventFactory();
-        StringBuilder sb = new StringBuilder();
 
-        for(int i = 0; i < 10 ; i++) {
+        for(int i = 0; i < 3500 ; i++) {
             EventModel eventModel = eventFactory.getRandomEvent();
-            sb.append(eventModel.toString());
-            System.out.println(eventModel.toString());
+            pw.write(eventModel.toString());
+            pw.flush();
         }
 
-        pw.write(sb.toString());
-        pw.flush();
         pw.close();
     }
 }
